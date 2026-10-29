@@ -4,11 +4,6 @@
 
 A real-time monitoring system for factory machines. It receives live vibration and temperature readings over MQTT, answers questions about recent data in O(log n) time using custom data structures written in C#, and warns the operator early about unusual machine behaviour using an LSTM Autoencoder in Python. If the ML service goes offline, the system keeps working with simple threshold alerts.
 
-> **Academic project.** Developed at the Institute of Data Sciences, University of Engineering and Technology (UET) Lahore, Session 2025-2029. Supervised by Ms. Hijab Zaidi.
->
-> **Project status:** in development. Sections marked *(planned)* describe work that is not finished yet. Benchmark results will be added once they have been measured.
-
----
 
 ## Table of Contents
 
