@@ -20,4 +20,25 @@ public class CircularBuffer<T>
     }
 
     public int Capacity => _items.Length;
+    /// <summary>
+    /// Adds an item. If the buffer is full, the oldest item is overwritten.
+    /// </summary>
+    public void Add(T item)
+    {
+        lock (_lock)
+        {
+            if (_count < _items.Length)
+            {
+                // Not full: write in the next free seat.
+                _items[(_head + _count) % _items.Length] = item;
+                _count++;
+            }
+            else
+            {
+                // Full: overwrite the oldest item, then move the head forward.
+                _items[_head] = item;
+                _head = (_head + 1) % _items.Length;
+            }
+        }
+    }
 }
