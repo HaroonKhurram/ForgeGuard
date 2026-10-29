@@ -145,20 +145,38 @@ Fixed limits reliably catch only the first type. An **LSTM Autoencoder** is trai
 
 ## Project Structure
 
-> *Suggested layout. Update this section to match the actual folders in the repository.*
-
 ```
 ForgeGuard/
-├── backend/            # C# web application
-│   ├── DataStructures/ # CircularBuffer, SegmentTree, queues, linked list
-│   ├── Algorithms/     # sorting algorithms, binary search
-│   ├── Services/       # MqttIngestionService, AlertEngine, MlClient, RiskTracker
-│   └── Tests/          # unit tests and benchmarks
-├── ml-service/         # Python FastAPI service and LSTM Autoencoder
-├── dashboard/          # React dashboard
-├── simulator/          # dataset replay script (publishes to MQTT)
-├── data/               # dataset files (not committed, see Dataset)
-├── docs/               # SRS, diagrams, reports
+├── broker/                       # Mosquitto config and topic notes
+│   └── README.md
+├── csharp/                       # C# solution
+│   ├── SensorMonitor.Core/       # custom data structures and algorithms
+│   │   ├── Buffer/               # Circular Buffer
+│   │   ├── Collections/          # incoming queue, alert queue, linked list
+│   │   ├── Searching/            # recursive binary search
+│   │   ├── SegmentTree/          # Segment Tree
+│   │   └── Sorting/              # merge, quick, insertion, bubble, selection sort
+│   ├── SensorMonitor.Ingest/     # MQTT subscriber and message validation
+│   ├── SensorMonitor.Web/        # web application, API and live push to the dashboard
+│   ├── SensorMonitor.Tests/      # unit tests
+│   └── README.md
+├── dashboard/                    # React dashboard
+│   └── README.md
+├── data/                         # sample data only (full datasets are not committed)
+│   ├── sample/
+│   └── README.md
+├── docs/                         # project documents
+│   ├── contracts.md              # agreed message formats and naming rules
+│   └── Project_Work_Plan.docx    # work plan and task split
+├── ml-service/                   # Python FastAPI service and LSTM Autoencoder
+│   └── README.md
+├── models3d/                     # Blender files and glTF exports
+│   └── README.md
+├── simulator/                    # dataset replay script (publishes to MQTT)
+│   ├── requirements.txt
+│   └── README.md
+├── .gitignore
+├── CONTRIBUTING.md
 └── README.md
 ```
 
