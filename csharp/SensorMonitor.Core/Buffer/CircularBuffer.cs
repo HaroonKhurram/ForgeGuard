@@ -41,4 +41,34 @@ public class CircularBuffer<T>
             }
         }
     }
+
+    /// <summary>
+    /// How many items are stored right now (0 up to Capacity).
+    /// </summary>
+    public int Count
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _count;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns a copy of the stored items, oldest first, newest last.
+    /// </summary>
+    public T[] ToArrayOldestFirst()
+    {
+        lock (_lock)
+        {
+            var result = new T[_count];
+            for (int i = 0; i < _count; i++)
+            {
+                result[i] = _items[(_head + i) % _items.Length];
+            }
+            return result;
+        }
+    }
 }
