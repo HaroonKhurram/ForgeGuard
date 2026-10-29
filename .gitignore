@@ -1,0 +1,44 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# C# / .NET
+bin/
+obj/
+*.user
+*.suo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Node / React
+node_modules/
+dist/
+build/
+
+# Secrets
+.env
+*.env
+broker/passwd
+broker/*.pwd
+
+# Data: keep only small samples
+data/*
+!data/sample/
+!data/README.md
+data/sample/*
+!data/sample/.gitkeep
+!data/sample/*.csv
+!data/sample/*.json
+
+# Models and large binaries
+*.h5
+*.keras
+*.onnx
+*.blend1
