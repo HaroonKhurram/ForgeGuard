@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SensorMonitor.Core\SensorMonitor.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MQTTnet" Version="4.*" />
+  </ItemGroup>
+
+  <!-- Allow the Tests project to access internal types (e.g. ParsePayload). -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="SensorMonitor.Tests" />
+  </ItemGroup>
+
+</Project>
