@@ -1,0 +1,2 @@
+# Generate locally with: mosquitto_passwd -c passwd forgeguard_pub
+# Generate locally using the mosquitto_passwd commands in README.md
