@@ -28,6 +28,12 @@ password_file passwd
 
 ## 3. Authentication Setup
 
+First, open the broker directory from the project root:
+
+```powershell
+cd broker
+```
+
 Create publisher and subscriber accounts:
 
 ```powershell
@@ -35,12 +41,13 @@ mosquitto_passwd -c passwd forgeguard_pub
 mosquitto_passwd passwd forgeguard_sub
 ```
 
-Start the broker:
+Start the broker from the same directory:
 
 ```powershell
 mosquitto -c mosquitto.conf -v
 ```
 
+Keep this terminal running while testing MQTT communication.
 ## 4. MQTT Topic Design
 
 Topic structure:
