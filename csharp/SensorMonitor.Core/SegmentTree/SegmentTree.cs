@@ -66,4 +66,50 @@ public class SegmentTree
         _min[box] = Math.Min(_min[2 * box], _min[2 * box + 1]);
         _sum[box] = _sum[2 * box] + _sum[2 * box + 1];
     }
+
+    /// <summary>Sum of positions l..r (both included).</summary>
+    public double QuerySum(int l, int r) => QuerySumBox(1, 0, _size - 1, l, r);
+
+    /// <summary>Max of positions l..r (both included).</summary>
+    public double QueryMax(int l, int r) => QueryMaxBox(1, 0, _size - 1, l, r);
+
+    /// <summary>Min of positions l..r (both included).</summary>
+    public double QueryMin(int l, int r) => QueryMinBox(1, 0, _size - 1, l, r);
+
+    // box covers positions left..right; ql..qr is the range being asked for.
+    private double QuerySumBox(int box, int left, int right, int ql, int qr)
+    {
+        if (qr < left || right < ql)
+            return 0;                       // no overlap: adds nothing to a sum
+        if (ql <= left && right <= qr)
+            return _sum[box];               // fully inside: use the ready-made total
+
+        int mid = (left + right) / 2;       // partial overlap: ask both halves
+        return QuerySumBox(2 * box, left, mid, ql, qr)
+             + QuerySumBox(2 * box + 1, mid + 1, right, ql, qr);
+    }
+
+    private double QueryMaxBox(int box, int left, int right, int ql, int qr)
+    {
+        if (qr < left || right < ql)
+            return double.NegativeInfinity; // no overlap: loses every comparison
+        if (ql <= left && right <= qr)
+            return _max[box];
+
+        int mid = (left + right) / 2;
+        return Math.Max(QueryMaxBox(2 * box, left, mid, ql, qr),
+                        QueryMaxBox(2 * box + 1, mid + 1, right, ql, qr));
+    }
+
+    private double QueryMinBox(int box, int left, int right, int ql, int qr)
+    {
+        if (qr < left || right < ql)
+            return double.PositiveInfinity; // no overlap: loses every comparison
+        if (ql <= left && right <= qr)
+            return _min[box];
+
+        int mid = (left + right) / 2;
+        return Math.Min(QueryMinBox(2 * box, left, mid, ql, qr),
+                        QueryMinBox(2 * box + 1, mid + 1, right, ql, qr));
+    }
 }
