@@ -42,3 +42,6 @@ data/sample/*
 *.keras
 *.onnx
 *.blend1
+venv/
+simulator/output/
+data/raw/
