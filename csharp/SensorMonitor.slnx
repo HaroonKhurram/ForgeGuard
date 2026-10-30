@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SensorMonitor.Core/SensorMonitor.Core.csproj" />
+  <Project Path="SensorMonitor.Ingest/SensorMonitor.Ingest.csproj" />
+  <Project Path="SensorMonitor.Tests/SensorMonitor.Tests.csproj" />
+</Solution>

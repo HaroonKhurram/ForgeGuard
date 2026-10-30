@@ -42,7 +42,7 @@ ForgeGuard addresses both problems. A fast tier (custom data structures) answers
 
 ## Key Features
 
-- **Live data ingestion** from MQTT topics such as `factory/line1/motor3/vibration`.
+- **Live data ingestion** from MQTT topics such as `factory/line1/pump1/telemetry` (wildcard subscription `factory/line1/+/telemetry`).
 - **Burst protection:** an incoming queue sits between the MQTT receiver and the processing stage, so bursts of messages are buffered and not lost.
 - **Rolling window storage** in a custom array-based Circular Buffer that overwrites the oldest reading when full.
 - **Fast window queries:** max, min and sum over the last N minutes using a custom Segment Tree, in O(log n) instead of O(n).
@@ -210,7 +210,7 @@ npm install
 cd ..
 
 # 4. C# backend
-cd backend
+cd csharp
 dotnet restore
 cd ..
 ```
@@ -220,7 +220,7 @@ cd ..
 Copy the example settings file and fill in your own values. **Never commit passwords or keys.**
 
 ```
-MQTT broker address, username and password
+MQTT broker address (192.168.10.15:1883), username (forgeguard_sub) and password
 ML service URL
 Database connection string
 ```
@@ -236,8 +236,8 @@ mosquitto -c mosquitto.conf
 # 2. ML service
 cd ml-service && uvicorn main:app --reload
 
-# 3. C# backend
-cd backend && dotnet run
+# 3. C# backend (telemetry subscriber)
+dotnet run --project csharp/SensorMonitor.Ingest
 
 # 4. Dashboard
 cd dashboard && npm start
@@ -248,12 +248,17 @@ cd simulator && python replay.py
 
 Then open the dashboard in your browser (the address is shown in the terminal) and sign in.
 
-**Example MQTT message** *(final format to be fixed by the team)*
+**Agreed MQTT Message Format** (QoS 1, Topic: `factory/line1/{device_id}/telemetry`):
 
+```json
+{
+  "device_id": "pump1",
+  "time": "2026-10-30T10:00:00Z",
+  "vibration": 0.5,
+  "temp": 60.2
+}
 ```
-Topic:   factory/line1/motor3/vibration
-Payload: { "deviceId": "motor3", "timestamp": "2026-11-01T10:15:30Z", "value": 0.42 }
-```
+*Supported device IDs:* `pump1`, `pump2`, `pump3`.
 
 **User roles**
 
@@ -271,7 +276,7 @@ Payload: { "deviceId": "motor3", "timestamp": "2026-11-01T10:15:30Z", "value": 0
 - **Performance target:** a window query result should appear on the dashboard in under 100 ms. This will be verified by benchmarking and reported with the measured values.
 
 ```bash
-cd backend && dotnet test
+dotnet test csharp/SensorMonitor.slnx
 ```
 
 **Results** *(to be added after measurement)*
@@ -300,7 +305,7 @@ Dataset files are large, so they are **not stored in this repository**. Download
 
 - [x] Software Requirements Specification
 - [ ] Simulator and dataset preparation
-- [ ] MQTT broker setup and C# subscriber
+- [x] MQTT broker setup and C# subscriber (Tasks N1 & N3)
 - [ ] Circular Buffer and Segment Tree with unit tests
 - [ ] Incoming queue, alert queue and linked-list alert history
 - [ ] Sorting algorithms, recursive binary search and window statistics

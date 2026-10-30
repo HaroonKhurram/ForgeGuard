@@ -62,6 +62,6 @@ Response:
 
 | Section | Agreed by | Date |
 |---|---|---|
-| 1 to 3 | | |
+| 1 to 3 | Pair A & Pair B | 2026-10-30 |
 | 4 to 5 | | |
 | 6 | | |
