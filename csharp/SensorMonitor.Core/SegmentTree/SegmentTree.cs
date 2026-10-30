@@ -67,6 +67,35 @@ public class SegmentTree
         _sum[box] = _sum[2 * box] + _sum[2 * box + 1];
     }
 
+    /// <summary>
+    /// Changes the value at one position and redoes only the boxes above it.
+    /// </summary>
+    public void Update(int index, double value) => UpdateBox(1, 0, _size - 1, index, value);
+
+    // Walk down to the leaf for 'index', change it, then fix each box on the way back up.
+    private void UpdateBox(int box, int left, int right, int index, double value)
+    {
+        if (left == right)
+        {
+            // The leaf for this position: store the new value.
+            _max[box] = value;
+            _min[box] = value;
+            _sum[box] = value;
+            return;
+        }
+
+        int mid = (left + right) / 2;
+        if (index <= mid)
+            UpdateBox(2 * box, left, mid, index, value);          // position is in the left half
+        else
+            UpdateBox(2 * box + 1, mid + 1, right, index, value); // position is in the right half
+
+        // Back on the way up: recompute this box from its two children.
+        _max[box] = Math.Max(_max[2 * box], _max[2 * box + 1]);
+        _min[box] = Math.Min(_min[2 * box], _min[2 * box + 1]);
+        _sum[box] = _sum[2 * box] + _sum[2 * box + 1];
+    }
+
     /// <summary>Sum of positions l..r (both included).</summary>
     public double QuerySum(int l, int r) => QuerySumBox(1, 0, _size - 1, l, r);
 
