@@ -42,3 +42,7 @@ data/sample/*
 *.keras
 *.onnx
 *.blend1
+
+!data/inspect_cira.py
+
+!data/plots/
