@@ -59,18 +59,21 @@ def simulate(machines, hours, interval_s, start, seed):
 
 
 def write_jsonl(df, path, line="line1"):
-    """One message per signal reading, in the format from the README example."""
+    """One MQTT-style message per reading, in the format from docs/contracts.md:
+    topic factory/line1/{device_id}/telemetry, payload with device_id, time,
+    vibration and temp."""
     with open(path, "w", encoding="utf-8") as f:
         for row in df.itertuples(index=False):
-            iso = row.time.strftime("%Y-%m-%dT%H:%M:%SZ")
-            for name in SIGNALS:
-                msg = {
-                    "topic": f"factory/{line}/{row.device_id}/{name}",
-                    "payload": {"deviceId": row.device_id, "timestamp": iso,
-                                "value": float(getattr(row, name))},
-                }
-                f.write(json.dumps(msg) + "\n")
-
+            msg = {
+                "topic": f"factory/{line}/{row.device_id}/telemetry",
+                "payload": {
+                    "device_id": row.device_id,
+                    "time": row.time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "vibration": float(row.vibration),
+                    "temp": float(row.temp),
+                },
+            }
+            f.write(json.dumps(msg) + "\n")
 
 def make_plot(df, path):
     import matplotlib
