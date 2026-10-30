@@ -1,0 +1,8 @@
+[
+{"topic": "factory/line1/pump1/telemetry", "payload": {"device_id": "pump1", "time": "2026-11-01T00:00:00Z", "vibration": 0.3798, "temp": 54.5366}},
+{"topic": "factory/line1/pump1/telemetry", "payload": {"device_id": "pump1", "time": "2026-11-01T00:00:01Z", "vibration": 0.4335, "temp": 55.1301}},
+{"topic": "factory/line1/pump2/telemetry", "payload": {"device_id": "pump2", "time": "2026-11-01T00:00:00Z", "vibration": 0.4125, "temp": 55.198}},
+{"topic": "factory/line1/pump2/telemetry", "payload": {"device_id": "pump2", "time": "2026-11-01T00:00:01Z", "vibration": 0.379, "temp": 54.8608}},
+{"topic": "factory/line1/pump3/telemetry", "payload": {"device_id": "pump3", "time": "2026-11-01T00:00:00Z", "vibration": 0.4178, "temp": 56.4306}},
+{"topic": "factory/line1/pump3/telemetry", "payload": {"device_id": "pump3", "time": "2026-11-01T00:00:01Z", "vibration": 0.4084, "temp": 55.8711}}
+]
