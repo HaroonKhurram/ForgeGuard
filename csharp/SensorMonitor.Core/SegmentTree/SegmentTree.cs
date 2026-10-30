@@ -4,6 +4,7 @@ namespace SensorMonitor.Core.SegmentTrees;
 /// A segment tree over an array of numbers. It answers max, min and sum
 /// for any range of positions without scanning the whole range.
 /// Ranges are inclusive on both ends: (2, 5) means positions 2, 3, 4 and 5.
+/// Bad input (empty array, bad range, bad index) throws an exception.
 /// NOT thread-safe: one thread builds and updates it.
 /// </summary>
 public class SegmentTree
@@ -22,19 +23,23 @@ public class SegmentTree
     public int Count => _size;
 
     /// <summary>Max of the whole array (the root box).</summary>
-    public double RootMax => _max[1];
+    public double RootMax { get { EnsureBuilt(); return _max[1]; } }
 
     /// <summary>Min of the whole array (the root box).</summary>
-    public double RootMin => _min[1];
+    public double RootMin { get { EnsureBuilt(); return _min[1]; } }
 
     /// <summary>Sum of the whole array (the root box).</summary>
-    public double RootSum => _sum[1];
+    public double RootSum { get { EnsureBuilt(); return _sum[1]; } }
 
     /// <summary>
     /// Plays the whole "tournament" once: fills every box from the values.
     /// </summary>
     public void Build(double[] values)
     {
+        ArgumentNullException.ThrowIfNull(values);
+        if (values.Length == 0)
+            throw new ArgumentException("Cannot build a tree from an empty array.", nameof(values));
+
         _size = values.Length;
 
         // 4 * n slots is the safe, standard size for this layout.
@@ -70,7 +75,14 @@ public class SegmentTree
     /// <summary>
     /// Changes the value at one position and redoes only the boxes above it.
     /// </summary>
-    public void Update(int index, double value) => UpdateBox(1, 0, _size - 1, index, value);
+    public void Update(int index, double value)
+    {
+        EnsureBuilt();
+        if (index < 0 || index >= _size)
+            throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} is outside 0..{_size - 1}.");
+
+        UpdateBox(1, 0, _size - 1, index, value);
+    }
 
     // Walk down to the leaf for 'index', change it, then fix each box on the way back up.
     private void UpdateBox(int box, int left, int right, int index, double value)
@@ -97,13 +109,40 @@ public class SegmentTree
     }
 
     /// <summary>Sum of positions l..r (both included).</summary>
-    public double QuerySum(int l, int r) => QuerySumBox(1, 0, _size - 1, l, r);
+    public double QuerySum(int l, int r)
+    {
+        CheckRange(l, r);
+        return QuerySumBox(1, 0, _size - 1, l, r);
+    }
 
     /// <summary>Max of positions l..r (both included).</summary>
-    public double QueryMax(int l, int r) => QueryMaxBox(1, 0, _size - 1, l, r);
+    public double QueryMax(int l, int r)
+    {
+        CheckRange(l, r);
+        return QueryMaxBox(1, 0, _size - 1, l, r);
+    }
 
     /// <summary>Min of positions l..r (both included).</summary>
-    public double QueryMin(int l, int r) => QueryMinBox(1, 0, _size - 1, l, r);
+    public double QueryMin(int l, int r)
+    {
+        CheckRange(l, r);
+        return QueryMinBox(1, 0, _size - 1, l, r);
+    }
+
+    // Stops any use of the tree before Build has been called.
+    private void EnsureBuilt()
+    {
+        if (_size == 0)
+            throw new InvalidOperationException("Call Build before using the tree.");
+    }
+
+    // Rejects a range that does not fit the data.
+    private void CheckRange(int l, int r)
+    {
+        EnsureBuilt();
+        if (l < 0 || r >= _size || l > r)
+            throw new ArgumentOutOfRangeException(nameof(l), $"Range {l}..{r} is invalid for a tree of {_size} values.");
+    }
 
     // box covers positions left..right; ql..qr is the range being asked for.
     private double QuerySumBox(int box, int left, int right, int ql, int qr)
