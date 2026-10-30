@@ -26,7 +26,7 @@ import pandas as pd
 # These numbers are assumptions chosen to look like a healthy motor.
 SIGNALS = {
     "vibration":   dict(baseline=0.40, noise_std=0.03, drift_per_hour=0.005, cycle_amp=0.02),
-    "temperature": dict(baseline=55.0, noise_std=0.40, drift_per_hour=0.15,  cycle_amp=1.00),
+    "temp": dict(baseline=55.0, noise_std=0.40, drift_per_hour=0.15,  cycle_amp=1.00),
 }
 
 
@@ -46,7 +46,7 @@ def simulate(machines, hours, interval_s, start, seed):
     ts = pd.date_range(start=start, periods=n, freq=f"{interval_s}s", tz="UTC")
     frames = []
     for m in machines:
-        df = pd.DataFrame({"timestamp": ts, "deviceId": m})
+        df = pd.DataFrame({"time": ts, "device_id": m})
         for name, cfg in SIGNALS.items():
             # small per-machine offset so machines are not identical
             cfg = dict(cfg, baseline=cfg["baseline"] * rng.uniform(0.95, 1.05))
@@ -62,11 +62,11 @@ def write_jsonl(df, path, line="line1"):
     """One message per signal reading, in the format from the README example."""
     with open(path, "w", encoding="utf-8") as f:
         for row in df.itertuples(index=False):
-            iso = row.timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
+            iso = row.time.strftime("%Y-%m-%dT%H:%M:%SZ")
             for name in SIGNALS:
                 msg = {
-                    "topic": f"factory/{line}/{row.deviceId}/{name}",
-                    "payload": {"deviceId": row.deviceId, "timestamp": iso,
+                    "topic": f"factory/{line}/{row.device_id}/{name}",
+                    "payload": {"deviceId": row.device_id, "timestamp": iso,
                                 "value": float(getattr(row, name))},
                 }
                 f.write(json.dumps(msg) + "\n")
@@ -77,13 +77,13 @@ def make_plot(df, path):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    m = df["deviceId"].iloc[0]
-    d = df[df["deviceId"] == m]
+    m = df["device_id"].iloc[0]
+    d = df[df["device_id"] == m]
     fig, axes = plt.subplots(2, 1, figsize=(11, 7), sharex=True)
-    units = {"vibration": "mm/s", "temperature": "degC"}
+    units = {"vibration": "mm/s", "temp": "degC"}
     for ax, name in zip(axes, SIGNALS):
-        ax.plot(d["timestamp"], d[name], lw=0.6, alpha=0.7, label="noisy reading")
-        ax.plot(d["timestamp"], d[f"{name}_clean"], lw=2, color="red",
+        ax.plot(d["time"], d[name], lw=0.6, alpha=0.7, label="noisy reading")
+        ax.plot(d["time"], d[f"{name}_clean"], lw=2, color="red",
                 label="underlying trend (baseline + drift + load cycle)")
         ax.set_ylabel(f"{name} ({units[name]})")
         ax.legend(loc="upper left")
@@ -97,7 +97,7 @@ def make_plot(df, path):
 
 def main():
     p = argparse.ArgumentParser(description="ForgeGuard basic sensor simulator (I1a)")
-    p.add_argument("--machines", nargs="+", default=["motor1", "motor2", "motor3"])
+    p.add_argument("--machines", nargs="+", default=["pump1", "pump2", "pump3"])
     p.add_argument("--hours", type=float, default=6)
     p.add_argument("--interval", type=int, default=1, help="seconds between readings")
     p.add_argument("--start", default="2026-11-01T00:00:00")
@@ -110,8 +110,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     df = simulate(a.machines, a.hours, a.interval, a.start, a.seed)
 
-    cols = ["timestamp", "deviceId", "vibration", "temperature", "label"]
-    df[cols].to_csv(out / "simulated_readings.csv", index=False)
+    cols = ["device_id", "time", "vibration", "temp", "label"]
+    df[cols].to_csv(out / "simulated_readings.csv", index=False, date_format="%Y-%m-%dT%H:%M:%SZ")
     write_jsonl(df, out / "simulated_messages.jsonl")
     if a.plot:
         make_plot(df, out / "simulation_plot.png")
