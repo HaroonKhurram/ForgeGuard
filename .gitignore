@@ -44,3 +44,5 @@ data/sample/*
 *.blend1
 
 !data/inspect_cira.py
+
+!data/plots/
